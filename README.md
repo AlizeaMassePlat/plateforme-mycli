@@ -3,7 +3,7 @@
 
 ## Build le projet pour générer un fichier `.exe`
 ```bash
-go build
+go build -o bs3/bs3.exe
 ```
 
 ## Créer une commande avec le CLI Cobra
