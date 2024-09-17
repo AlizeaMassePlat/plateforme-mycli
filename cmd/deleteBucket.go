@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // deleteBucketCmd représente la commande `delete-bucket`
@@ -18,8 +19,14 @@ var deleteBucketCmd = &cobra.Command{
 		}
 		bucketName := args[0]
 
+		// Récupérer l'URL du serveur S3 à partir de la configuration
+		apiURL := viper.GetString("s3.api_url")
+		if apiURL == "" {
+			log.Fatal("API URL is not configured. Please set it in the config file or environment variables.")
+		}
+
 		// Construire l'URL pour la requête DELETE
-		url := "http://localhost:9090/" + bucketName + "/"
+		url := fmt.Sprintf("%s/%s/", apiURL, bucketName)
 		fmt.Printf("Attempting to delete bucket '%s' using URL: %s\n", bucketName, url)
 
 		// Créer la requête HTTP DELETE

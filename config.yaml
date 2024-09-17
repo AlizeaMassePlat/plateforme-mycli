@@ -1,0 +1,4 @@
+s3:
+  api_url: "http://localhost:9090"
+  access_key: "your-access-key"
+  secret_key: "your-secret-key"

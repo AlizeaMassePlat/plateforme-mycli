@@ -22,6 +22,12 @@ Ajouter : `[chemin vers]\my-cli-s3\bs3` à la variable d'environnement `PATH` de
 
 ![Exemple Bash](./exemple-cli.png)
 
+## Pour exécutez la commande avec ce fichier de configuration
+  ```bash
+  go run main.go list-buckets --config=config.yaml
+  ```
+
+
 ## Commandes disponibles
 
 - **Créer un bucket** :  
