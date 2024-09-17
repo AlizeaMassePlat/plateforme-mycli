@@ -41,7 +41,7 @@ var createBucketCmd = &cobra.Command{
     },
 }
 
-// Fonction de création de bucket avec gestion des erreurs
+// Fonction de création de bucket 
 func createBucket(url string) error {
     // Créer une requête PUT pour créer le bucket
     req, err := http.NewRequest("PUT", url, nil)
