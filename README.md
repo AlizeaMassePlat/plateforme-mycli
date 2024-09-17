@@ -13,7 +13,10 @@ cobra-cli add "NOM DE COMMANDE"
 
 ## Exécuter une commande
 ```bash
-./plateforme-mycli.exe "NOM DE COMMANDE" "ARGS"
+go run main.go "NOM DE COMMANDE" "ARGS"
+```
+```bash
+bs3/bs3.exe "NOM DE COMMANDE" "ARGS"
 ```
 
 ## Pour utiliser le prefix "bs3" dans bash

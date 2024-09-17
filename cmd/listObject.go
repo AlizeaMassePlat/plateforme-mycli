@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-
+	"time"
 	"github.com/spf13/cobra"
 )
 
@@ -61,9 +61,23 @@ var listObjectCmd = &cobra.Command{
 			log.Fatalf("Error parsing XML response: %v", err)
 		}
 
+		
 		// Afficher les objets
+		fmt.Println("Objects:")
+		const readableDateLayout = "2006-01-02 15:04:05"
+		const inputLayout = time.RFC3339 // Le format attendu 
+		
 		for _, obj := range result.Objects {
-			fmt.Printf("[%s] %dB %s\n", obj.LastModified, obj.Size, obj.Key)
+			// Convertir la chaîne de caractères LastModified en time.Time
+			lastModifiedTime, err := time.Parse(inputLayout, obj.LastModified)
+			if err != nil {
+				log.Printf("Error parsing date: %v", err)
+				continue 
+			}
+			
+			// Formater la date pour un affichage lisible
+			readableDate := lastModifiedTime.Format(readableDateLayout)
+			fmt.Printf("- [%s] %dB %s\n", readableDate, obj.Size, obj.Key)
 		}
 	},
 }
