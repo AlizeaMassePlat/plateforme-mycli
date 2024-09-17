@@ -6,3 +6,5 @@ cobra-cli add "NOM DE COMMANDE"
 
 Executer une commande 
 ./plateforme-mycli.exe "NOM DE COMMANDE" "ARGS" 
+
+ou go run main.go list-buckets
