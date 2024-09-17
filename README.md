@@ -61,3 +61,7 @@ Ajouter : `[chemin vers]\my-cli-s3\bs3` à la variable d'environnement `PATH` de
   bs3 delete-bucket <bucket-name> 
   ```
 
+- **Supprimer un objet** :  
+  ```bash
+  bs3 delete-object <bucket-name> <object-name>
+  ```
