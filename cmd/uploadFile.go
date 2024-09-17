@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // uploadFileCmd représente la commande upload-file
@@ -22,6 +23,12 @@ var uploadFileCmd = &cobra.Command{
 
 		bucketName := args[0]
 		filePath := args[1]
+
+		// Récupérer l'URL de l'API via Viper
+		apiURL := viper.GetString("s3.api_url")
+		if apiURL == "" {
+			log.Fatal("API URL is not configured. Please set it in the config file or environment variables.")
+		}
 
 		// Lire le fichier à uploader
 		file, err := os.Open(filePath)
@@ -40,7 +47,7 @@ var uploadFileCmd = &cobra.Command{
 		fileName := filepath.Base(filePath)
 
 		// URL de l'API pour l'upload du fichier
-		url := fmt.Sprintf("http://localhost:9090/%s/%s", bucketName, fileName)
+		url := fmt.Sprintf("%s/%s/%s", apiURL, bucketName, fileName)
 
 		// Calculer la longueur du contenu
 		contentLength := len(fileContent)
