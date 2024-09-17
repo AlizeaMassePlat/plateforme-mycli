@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-
+	"time"
 	"github.com/spf13/cobra"
 )
 
@@ -61,9 +61,22 @@ var listBucketsCmd = &cobra.Command{
 			return
 		}
 
+		// Afficher les buckets
 		fmt.Println("Buckets:")
+		const readableDateLayout = "2006-01-02 15:04:05"
+		const inputLayout = time.RFC3339 // Le format attendu de votre chaîne de date (par exemple "2024-09-17T08:58:31Z")
+		
 		for _, bucket := range result.Buckets {
-			fmt.Printf("- %s (created on %s)\n", bucket.Name, bucket.CreationDate)
+			// Convertir la chaîne de caractères CreationDate en time.Time
+			creationDateTime, err := time.Parse(inputLayout, bucket.CreationDate)
+			if err != nil {
+				log.Printf("Error parsing date: %v", err)
+				continue 
+			}
+			
+			// Formater la date pour un affichage lisible
+			readableDate := creationDateTime.Format(readableDateLayout)
+			fmt.Printf("- [%s] %s\n", readableDate, bucket.Name)
 		}
 	},
 }
