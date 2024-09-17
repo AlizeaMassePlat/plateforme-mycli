@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // downloadFileCmd représente la commande download-file
@@ -27,8 +28,14 @@ var downloadFileCmd = &cobra.Command{
 		fileName := args[1]
 		destPath := args[2]
 
+		// Récupérer l'URL de l'API depuis la configuration via Viper
+		apiURL := viper.GetString("s3.api_url")
+		if apiURL == "" {
+			log.Fatal("API URL is not configured. Please set it in the config file or environment variables.")
+		}
+
 		// Construire l'URL pour l'API
-		url := fmt.Sprintf("http://localhost:9090/%s/%s", bucketName, fileName)
+		url := fmt.Sprintf("%s/%s/%s", apiURL, bucketName, fileName)
 
 		// Télécharger le fichier
 		if err := downloadFile(url, destPath, fileName); err != nil {
@@ -40,75 +47,75 @@ var downloadFileCmd = &cobra.Command{
 }
 
 func downloadFile(url, destPath, fileName string) error {
-    // Faire la requête HTTP GET
-    resp, err := http.Get(url)
-    if err != nil {
-        return fmt.Errorf("failed to make GET request: %w", err)
-    }
-    defer resp.Body.Close()
+	// Faire la requête HTTP GET
+	resp, err := http.Get(url)
+	if err != nil {
+		return fmt.Errorf("failed to make GET request: %w", err)
+	}
+	defer resp.Body.Close()
 
-    // Vérifier le code de statut HTTP
-    if resp.StatusCode != http.StatusOK {
-        return fmt.Errorf("failed to download file. Status code: %d", resp.StatusCode)
-    }
+	// Vérifier le code de statut HTTP
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("failed to download file. Status code: %d", resp.StatusCode)
+	}
 
-    // Ouvrir le fichier de destination
-    out, err := os.Create(filepath.Join(destPath, fileName))
-    if err != nil {
-        return fmt.Errorf("failed to create destination file: %w", err)
-    }
-    defer out.Close()
+	// Ouvrir le fichier de destination
+	out, err := os.Create(filepath.Join(destPath, fileName))
+	if err != nil {
+		return fmt.Errorf("failed to create destination file: %w", err)
+	}
+	defer out.Close()
 
-    // Créer un buffer pour lire le contenu
-    buffer := make([]byte, 256) // Taille de buffer réduite
+	// Créer un buffer pour lire le contenu
+	buffer := make([]byte, 256) // Taille de buffer réduite
 
-    // Obtenir la taille du fichier pour l'animation de progression
-    totalSize := resp.ContentLength
-    var downloadedSize int64 = 0
+	// Obtenir la taille du fichier pour l'animation de progression
+	totalSize := resp.ContentLength
+	var downloadedSize int64 = 0
 
-    // Lire et copier le contenu avec une animation de progression
-    firstRead := true // Indicateur pour démarrer la barre de progression après la première lecture
-    progressChan := make(chan struct{})
+	// Lire et copier le contenu avec une animation de progression
+	firstRead := true // Indicateur pour démarrer la barre de progression après la première lecture
+	progressChan := make(chan struct{})
 
-    for {
-        n, err := resp.Body.Read(buffer)
-        if err != nil && err != io.EOF {
-            progressChan <- struct{}{} // Arrêter l'animation
-            return fmt.Errorf("failed to read response body: %w", err)
-        }
-        if n == 0 {
-            break
-        }
+	for {
+		n, err := resp.Body.Read(buffer)
+		if err != nil && err != io.EOF {
+			progressChan <- struct{}{} // Arrêter l'animation
+			return fmt.Errorf("failed to read response body: %w", err)
+		}
+		if n == 0 {
+			break
+		}
 
-        // Écrire dans le fichier de destination
-        if _, err := out.Write(buffer[:n]); err != nil {
-            progressChan <- struct{}{} // Arrêter l'animation
-            return fmt.Errorf("failed to write to file: %w", err)
-        }
-        downloadedSize += int64(n)
+		// Écrire dans le fichier de destination
+		if _, err := out.Write(buffer[:n]); err != nil {
+			progressChan <- struct{}{} // Arrêter l'animation
+			return fmt.Errorf("failed to write to file: %w", err)
+		}
+		downloadedSize += int64(n)
 
-        // Démarrer l'animation de progression après la première lecture
-        if firstRead {
-            firstRead = false
-            go func() {
-                for {
-                    select {
-                    case <-progressChan:
-                        return
-                    default:
-                        printProgress(downloadedSize, totalSize)
-                        time.Sleep(100 * time.Millisecond) // rafraîchir toutes les 100ms
-                    }
-                }
-            }()
-        }
-    }
+		// Démarrer l'animation de progression après la première lecture
+		if firstRead {
+			firstRead = false
+			go func() {
+				for {
+					select {
+					case <-progressChan:
+						return
+					default:
+						printProgress(downloadedSize, totalSize)
+						time.Sleep(100 * time.Millisecond) // rafraîchir toutes les 100ms
+					}
+				}
+			}()
+		}
+	}
 
-    // Mettre à jour une dernière fois la barre de progression pour indiquer 100%
-    printProgress(downloadedSize, totalSize)
+	// Mettre à jour une dernière fois la barre de progression pour indiquer 100%
+	printProgress(downloadedSize, totalSize)
 
-    // Arrêter l'animation de progression
-    progressChan <- struct{}{}
+	// Arrêter l'animation de progression
+	progressChan <- struct{}{}
 	fmt.Print("\n")
 	return nil
 }
