@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"time"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // Object represents an object in the S3 bucket
@@ -33,8 +34,14 @@ var listObjectCmd = &cobra.Command{
 
 		bucketName := args[0]
 
+		// Récupérer l'URL de l'API via Viper
+		apiURL := viper.GetString("s3.api_url")
+		if apiURL == "" {
+			log.Fatal("API URL is not configured. Please set it in the config file or environment variables.")
+		}
+
 		// Construire l'URL pour lister les objets du bucket
-		url := fmt.Sprintf("http://localhost:9090/%s/", bucketName)
+		url := fmt.Sprintf("%s/%s/", apiURL, bucketName)
 
 		// Effectuer une requête GET
 		resp, err := http.Get(url)
@@ -60,21 +67,21 @@ var listObjectCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalf("Error parsing XML response: %v", err)
 		}
-
 		
+
 		// Afficher les objets
 		fmt.Println("Objects:")
 		const readableDateLayout = "2006-01-02 15:04:05"
-		const inputLayout = time.RFC3339 // Le format attendu 
-		
+		const inputLayout = time.RFC3339 // Le format attendu
+
 		for _, obj := range result.Objects {
 			// Convertir la chaîne de caractères LastModified en time.Time
 			lastModifiedTime, err := time.Parse(inputLayout, obj.LastModified)
 			if err != nil {
 				log.Printf("Error parsing date: %v", err)
-				continue 
+				continue
 			}
-			
+
 			// Formater la date pour un affichage lisible
 			readableDate := lastModifiedTime.Format(readableDateLayout)
 			fmt.Printf("- [%s] %dB %s\n", readableDate, obj.Size, obj.Key)
