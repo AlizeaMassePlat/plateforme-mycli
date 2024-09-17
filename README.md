@@ -19,11 +19,17 @@ go run main.go "NOM DE COMMANDE" "ARGS"
 bs3/bs3.exe "NOM DE COMMANDE" "ARGS"
 ```
 
+## Configurer le chemin vers son fichier de configuration 
+```bash
+$env:MYCLI_CONFIG = "config.yaml" 
+```
+
 ## Pour utiliser le prefix "bs3" dans bash
 
 Ajouter : `[chemin vers]\my-cli-s3\bs3` à la variable d'environnement `PATH` de Windows.
 
 ![Exemple Bash](./exemple-cli.png)
+
 
 ## Commandes disponibles
 

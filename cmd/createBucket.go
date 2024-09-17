@@ -7,6 +7,7 @@ import (
     "time"
     "io"
     "github.com/spf13/cobra"
+    "github.com/spf13/viper"
 )
 
 // createBucketCmd représente la commande create-bucket
@@ -21,8 +22,15 @@ var createBucketCmd = &cobra.Command{
 
         bucketName := args[0]
 
-        // URL de votre API qui permet de créer un bucket
-        url := "http://localhost:9090/" + bucketName + "/"
+        // Utilisation de Viper pour récupérer l'URL de l'API depuis une variable d'environnement ou un fichier de config
+        apiURL := viper.GetString("s3.api_url")
+        if apiURL == "" {
+            log.Println("Error: S3 API URL is not configured. Please set it in the config file or environment variables.")
+            return
+        }
+
+        // URL complète pour créer le bucket
+        url := fmt.Sprintf("%s/%s/", apiURL, bucketName)
 
         // Appel pour créer le bucket
         if err := createBucket(url); err != nil {
@@ -60,12 +68,22 @@ func createBucket(url string) error {
     }
 
     // Vérifier le code de statut HTTP et afficher un message détaillé
-    if resp.StatusCode == http.StatusOK {
-        return nil
-    } else if resp.StatusCode == http.StatusConflict {
-        return fmt.Errorf("%s", string(body))
-    } else {
-        return fmt.Errorf("unexpected error: received status code %d with message: %s", resp.StatusCode, string(body))
+    switch resp.StatusCode {
+        case http.StatusCreated: // 201 - Bucket created
+            return nil
+        case http.StatusOK: // 200 - Handle as success (if backend returns 200)
+            fmt.Println("Warning: Server returned 200 OK instead of 201 Created. Bucket may have been created successfully.")
+            return nil
+        case http.StatusConflict: // 409 - Bucket already exists
+            return fmt.Errorf("bucket already exists: %s", string(body))
+        case http.StatusBadRequest: // 400 - Invalid bucket name
+            return fmt.Errorf("invalid bucket name or bad request: %s", string(body))
+        case http.StatusNotFound: // 404 - API endpoint not found
+            return fmt.Errorf("API endpoint not found: %s", string(body))
+        case http.StatusInternalServerError: // 500 - Server error
+            return fmt.Errorf("server error: %s", string(body))
+        default:
+            return fmt.Errorf("unexpected error: received status code %d with message: %s", resp.StatusCode, string(body))
     }
 }
 
