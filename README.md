@@ -37,6 +37,14 @@ Ajouter : `[chemin vers]\my-cli-s3\bs3` à la variable d'environnement `PATH` de
   ```bash
   bs3 create-bucket <bucket-name>
   ```
+  - **Lister les buckets** :  
+  ```bash
+  bs3 list-buckets
+  ```
+- **Lister les objets** :  
+  ```bash
+  bs3 list-object <bucket-name>
+  ```
 
 - **Uploader un fichier** :  
   ```bash
@@ -48,12 +56,8 @@ Ajouter : `[chemin vers]\my-cli-s3\bs3` à la variable d'environnement `PATH` de
   bs3 download-file <bucket-name> <file-name> <destination-path>
   ```
 
-- **Lister les objets** :  
+  - **Supprimer un bucket** :  
   ```bash
-  bs3 list-object <bucket-name>
+  bs3 delete-bucket <bucket-name> 
   ```
 
-- **Uploader un objet** :  
-  ```bash
-  bs3 upload-object <bucket-name> <object-name> <file-path>
-  ```

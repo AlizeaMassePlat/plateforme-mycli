@@ -13,7 +13,7 @@ var cfgFile string
 
 // rootCmd représente la commande de base
 var rootCmd = &cobra.Command{
-	Use:   "my-cli",
+	Use:   "bs3",
 	Short: "CLI to interact with S3 API",
 }
 
@@ -59,7 +59,6 @@ func initConfig() {
 
 	// Lire le fichier de configuration
 	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	} else if cfgFile != "" || envConfig != "" {
 		log.Fatalf("Could not read config file: %s", viper.ConfigFileUsed())
 	}

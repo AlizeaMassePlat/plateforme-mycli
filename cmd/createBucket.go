@@ -69,13 +69,10 @@ func createBucket(url string) error {
 
     // Vérifier le code de statut HTTP et afficher un message détaillé
     switch resp.StatusCode {
-        case http.StatusCreated: // 201 - Bucket created
-            return nil
-        case http.StatusOK: // 200 - Handle as success (if backend returns 200)
-            fmt.Println("Warning: Server returned 200 OK instead of 201 Created. Bucket may have been created successfully.")
+        case http.StatusOK: // 200 - Succes
             return nil
         case http.StatusConflict: // 409 - Bucket already exists
-            return fmt.Errorf("bucket already exists: %s", string(body))
+            return fmt.Errorf("%s", string(body))
         case http.StatusBadRequest: // 400 - Invalid bucket name
             return fmt.Errorf("invalid bucket name or bad request: %s", string(body))
         case http.StatusNotFound: // 404 - API endpoint not found
