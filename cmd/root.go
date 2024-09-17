@@ -35,9 +35,15 @@ func init() {
 
 // initConfig configure Viper pour lire les fichiers de configuration et les variables d'environnement
 func initConfig() {
+	// Vérifier si la variable d'environnement MYCLI_CONFIG est définie
+	envConfig := os.Getenv("MYCLI_CONFIG")
+
 	if cfgFile != "" {
-		// Utiliser le fichier spécifié par l'utilisateur
+		// Utiliser le fichier spécifié par l'utilisateur avec --config
 		viper.SetConfigFile(cfgFile)
+	} else if envConfig != "" {
+		// Utiliser le fichier spécifié dans la variable d'environnement MYCLI_CONFIG
+		viper.SetConfigFile(envConfig)
 	} else {
 		// Utiliser le fichier de configuration par défaut dans le répertoire HOME
 		home, err := os.UserHomeDir()
@@ -54,7 +60,7 @@ func initConfig() {
 	// Lire le fichier de configuration
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
-	} else if cfgFile != "" {
-		log.Fatalf("Could not read config file: %s", cfgFile)
+	} else if cfgFile != "" || envConfig != "" {
+		log.Fatalf("Could not read config file: %s", viper.ConfigFileUsed())
 	}
 }
