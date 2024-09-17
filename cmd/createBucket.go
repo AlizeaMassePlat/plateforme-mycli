@@ -34,7 +34,7 @@ var createBucketCmd = &cobra.Command{
 
         // Appel pour créer le bucket
         if err := createBucket(url); err != nil {
-            log.Printf("Error creating bucket: %v\n", err)
+            fmt.Printf("Error creating bucket: %v", err)
         } else {
             fmt.Printf("Bucket '%s' created successfully.\n", bucketName)
         }

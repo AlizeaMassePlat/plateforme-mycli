@@ -27,7 +27,6 @@ var deleteBucketCmd = &cobra.Command{
 
 		// Construire l'URL pour la requête DELETE
 		url := fmt.Sprintf("%s/%s/", apiURL, bucketName)
-		fmt.Printf("Attempting to delete bucket '%s' using URL: %s\n", bucketName, url)
 
 		// Créer la requête HTTP DELETE
 		req, err := http.NewRequest("DELETE", url, nil)
