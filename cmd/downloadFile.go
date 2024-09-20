@@ -55,8 +55,8 @@ func downloadFile(url, destPath, fileName string) error {
 	defer resp.Body.Close()
 
 	// Vérifier le code de statut HTTP
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("failed to download file. Status code: %d", resp.StatusCode)
+	if resp.StatusCode == http.StatusNotFound {
+		return fmt.Errorf("The system cannot find the file specified.")
 	}
 
 	// Ouvrir le fichier de destination
