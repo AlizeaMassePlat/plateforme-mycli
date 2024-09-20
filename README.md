@@ -65,3 +65,8 @@ Ajouter : `[chemin vers]\my-cli-s3\bs3` à la variable d'environnement `PATH` de
   ```bash
   bs3 delete-object <bucket-name> <object-name>
   ```
+
+  ## Pour lancer les test 
+  ```bash
+  go test -v ./cmd_test  
+  ```
