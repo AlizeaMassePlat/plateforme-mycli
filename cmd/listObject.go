@@ -24,7 +24,7 @@ type ListBucketResult struct {
 }
 
 // listObjectCmd represents the list-object command
-var listObjectCmd = &cobra.Command{
+var ListObjectCmd = &cobra.Command{
 	Use:   "list-object",
 	Short: "List objects in a specified S3 bucket",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -90,5 +90,5 @@ var listObjectCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(listObjectCmd)
+	RootCmd.AddCommand(ListObjectCmd)
 }

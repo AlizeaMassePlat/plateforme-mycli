@@ -21,7 +21,7 @@ type ObjectToDelete struct {
 }
 
 // deleteObjectCmd represents the deleteObject command
-var deleteObjectCmd = &cobra.Command{
+var DeleteObjectCmd = &cobra.Command{
 	Use:   "delete-object",
 	Short: "Deletes an object from the specified S3 bucket",
 	Long: `This command deletes an object from the specified S3 bucket.
@@ -90,5 +90,5 @@ my-cli delete-object <bucket-name> <object-key>`,
 }
 
 func init() {
-	rootCmd.AddCommand(deleteObjectCmd)
+	RootCmd.AddCommand(DeleteObjectCmd)
 }

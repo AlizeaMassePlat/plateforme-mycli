@@ -9,7 +9,7 @@ import (
 )
 
 // deleteBucketCmd représente la commande `delete-bucket`
-var deleteBucketCmd = &cobra.Command{
+var DeleteBucketCmd = &cobra.Command{
 	Use:   "delete-bucket",
 	Short: "Delete an S3 bucket via the API",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -56,5 +56,5 @@ var deleteBucketCmd = &cobra.Command{
 
 func init() {
 	// Enregistrer la commande delete-bucket dans la racine
-	rootCmd.AddCommand(deleteBucketCmd)
+	RootCmd.AddCommand(DeleteBucketCmd)
 }

@@ -14,7 +14,7 @@ import (
 )
 
 // uploadFileCmd représente la commande upload-file
-var uploadFileCmd = &cobra.Command{
+var UploadFileCmd = &cobra.Command{
 	Use:   "upload-file",
 	Short: "Uploads a file to a specified S3 bucket via the API",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -119,7 +119,7 @@ var uploadFileCmd = &cobra.Command{
 
 		// Vérifier le statut de la réponse et afficher le message après l'upload
 		if resp.StatusCode == http.StatusOK {
-			fmt.Printf("File '%s' uploaded successfully to bucket '%s'.\n", fileName, bucketName)
+			fmt.Printf("\nFile '%s' uploaded successfully to bucket '%s'.\n", fileName, bucketName)
 		} else {
 			fmt.Printf("Failed to upload file. Status code: %d\n", resp.StatusCode)
 		}
@@ -127,7 +127,7 @@ var uploadFileCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(uploadFileCmd)
+	RootCmd.AddCommand(UploadFileCmd)
 }
 
 // Fonction pour afficher la barre de progression

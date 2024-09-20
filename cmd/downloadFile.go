@@ -15,7 +15,7 @@ import (
 )
 
 // downloadFileCmd représente la commande download-file
-var downloadFileCmd = &cobra.Command{
+var DownloadFileCmd = &cobra.Command{
 	Use:   "download-file",
 	Short: "Downloads a file from a specified S3 bucket via the API",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -134,5 +134,5 @@ func printProgress(downloaded, total int64) {
 }
 
 func init() {
-	rootCmd.AddCommand(downloadFileCmd)
+	RootCmd.AddCommand(DownloadFileCmd)
 }

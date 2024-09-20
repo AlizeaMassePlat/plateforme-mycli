@@ -34,14 +34,14 @@ var createBucketCmd = &cobra.Command{
 
         // Appel pour créer le bucket
         if err := createBucket(url); err != nil {
-            fmt.Printf("Error creating bucket: %v", err)
+            log.Printf("%v", err)
         } else {
             fmt.Printf("Bucket '%s' created successfully.\n", bucketName)
         }
     },
 }
 
-// Fonction de création de bucket 
+// Fonction de création de bucket avec gestion des erreurs
 func createBucket(url string) error {
     // Créer une requête PUT pour créer le bucket
     req, err := http.NewRequest("PUT", url, nil)
@@ -69,21 +69,24 @@ func createBucket(url string) error {
 
     // Vérifier le code de statut HTTP et afficher un message détaillé
     switch resp.StatusCode {
-        case http.StatusOK: // 200 - Succes
+        case http.StatusCreated: // 201 - Bucket created
+            return nil
+        case http.StatusOK: // 200 - Handle as success (if backend returns 200)
+            fmt.Println("Warning: Server returned 200 OK instead of 201 Created. Bucket may have been created successfully.")
             return nil
         case http.StatusConflict: // 409 - Bucket already exists
             return fmt.Errorf("%s", string(body))
         case http.StatusBadRequest: // 400 - Invalid bucket name
-            return fmt.Errorf("invalid bucket name or bad request: %s", string(body))
+            return fmt.Errorf("%s", string(body))
         case http.StatusNotFound: // 404 - API endpoint not found
-            return fmt.Errorf("API endpoint not found: %s", string(body))
+            return fmt.Errorf("%s", string(body))
         case http.StatusInternalServerError: // 500 - Server error
-            return fmt.Errorf("server error: %s", string(body))
+            return fmt.Errorf("%s", string(body))
         default:
             return fmt.Errorf("unexpected error: received status code %d with message: %s", resp.StatusCode, string(body))
     }
 }
 
 func init() {
-    rootCmd.AddCommand(createBucketCmd)
+    RootCmd.AddCommand(createBucketCmd)
 }

@@ -24,7 +24,7 @@ type ListAllMyBucketsResult struct {
 }
 
 // listBucketsCmd représente la commande `list-buckets`
-var listBucketsCmd = &cobra.Command{
+var ListBucketsCmd = &cobra.Command{
 	Use:   "list-buckets",
 	Short: "List all S3 buckets via the API",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -97,5 +97,5 @@ func handleError(err error) {
 
 func init() {
 	// Ajouter la commande `list-buckets` à la racine
-	rootCmd.AddCommand(listBucketsCmd)
+	RootCmd.AddCommand(ListBucketsCmd)
 }

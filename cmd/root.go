@@ -12,14 +12,14 @@ import (
 var cfgFile string
 
 // rootCmd représente la commande de base
-var rootCmd = &cobra.Command{
+var RootCmd = &cobra.Command{
 	Use:   "bs3",
 	Short: "CLI to interact with S3 API",
 }
 
 // Execute exécute la commande root et toutes ses sous-commandes
 func Execute() {
-	if err := rootCmd.Execute(); err != nil {
+	if err := RootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
@@ -30,7 +30,7 @@ func init() {
 	cobra.OnInitialize(initConfig)
 
 	// Définir un flag pour permettre à l'utilisateur de spécifier un fichier de configuration
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.my-cli.yaml)")
+	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.my-cli.yaml)")
 }
 
 // initConfig configure Viper pour lire les fichiers de configuration et les variables d'environnement
