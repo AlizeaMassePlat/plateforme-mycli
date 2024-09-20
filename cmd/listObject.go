@@ -19,7 +19,7 @@ type Object struct {
 }
 
 // ListBucketResult represents the response structure from the S3 API
-type ListBucketResult struct {
+type ListObjectResult struct {
 	Objects []Object `xml:"Contents"`
 }
 
@@ -62,12 +62,16 @@ var ListObjectCmd = &cobra.Command{
 		}
 
 		// Parser la réponse XML
-		var result ListBucketResult
+		var result ListObjectResult
 		err = xml.Unmarshal(body, &result)
 		if err != nil {
 			log.Fatalf("Error parsing XML response: %v", err)
 		}
 		
+		if len(result.Objects) == 0 {
+			fmt.Println("No objects found.")
+			return
+		}
 
 		// Afficher les objets
 		fmt.Println("Objects:")
