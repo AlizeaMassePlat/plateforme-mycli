@@ -21,7 +21,7 @@ bs3/bs3.exe "NOM DE COMMANDE" "ARGS"
 
 ## Configurer le chemin vers son fichier de configuration 
 ```bash
-$env:MYCLI_CONFIG = "config.yaml" 
+$env:MYCLI_CONFIG = "C:\MSC-02\plateforme-mycli\config.yaml" 
 ```
 
 ## Pour utiliser le prefix "bs3" dans bash
@@ -64,4 +64,18 @@ Ajouter : `[chemin vers]\my-cli-s3\bs3` à la variable d'environnement `PATH` de
 - **Supprimer un objet** :  
   ```bash
   bs3 delete-object <bucket-name> <object-name>
+  ```
+
+## Pour exécuter les tests
+  ```bash
+  go test ./...   
+  ```
+
+- **Exécuter les test via la CLI** : 
+  ```bash
+  bs3 test
+  ```
+ou 
+  ```bash
+  bs3 test <TestName>
   ```

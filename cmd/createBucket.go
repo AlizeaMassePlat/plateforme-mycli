@@ -69,20 +69,21 @@ func createBucket(url string) error {
 
     // Vérifier le code de statut HTTP et afficher un message détaillé
     switch resp.StatusCode {
-        case http.StatusOK: // 200 - Succes
-            return nil
-        case http.StatusConflict: // 409 - Bucket already exists
-            return fmt.Errorf("%s", string(body))
-        case http.StatusBadRequest: // 400 - Invalid bucket name
-            return fmt.Errorf("invalid bucket name or bad request: %s", string(body))
-        case http.StatusNotFound: // 404 - API endpoint not found
-            return fmt.Errorf("API endpoint not found: %s", string(body))
-        case http.StatusInternalServerError: // 500 - Server error
-            return fmt.Errorf("server error: %s", string(body))
-        default:
-            return fmt.Errorf("unexpected error: received status code %d with message: %s", resp.StatusCode, string(body))
+    case http.StatusOK, http.StatusCreated: // 200 ou 201 - Succès
+        return nil
+    case http.StatusConflict: // 409 - Bucket already exists
+        return fmt.Errorf("%s", string(body))
+    case http.StatusBadRequest: // 400 - Invalid bucket name
+        return fmt.Errorf("invalid bucket name or bad request: %s", string(body))
+    case http.StatusNotFound: // 404 - API endpoint not found
+        return fmt.Errorf("API endpoint not found: %s", string(body))
+    case http.StatusInternalServerError: // 500 - Server error
+        return fmt.Errorf("server error: %s", string(body))
+    default:
+        return fmt.Errorf("unexpected error: received status code %d with message: %s", resp.StatusCode, string(body))
     }
 }
+
 
 func init() {
     rootCmd.AddCommand(createBucketCmd)
