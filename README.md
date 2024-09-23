@@ -68,5 +68,5 @@ Ajouter : `[chemin vers]\my-cli-s3\bs3` à la variable d'environnement `PATH` de
 
   ## Pour lancer les test 
   ```bash
-  go test -v ./cmd_test  
+  go test -count=1 -v ./cmd_test
   ```

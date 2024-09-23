@@ -83,6 +83,8 @@ my-cli delete-object <bucket-name> <object-key>`,
             fmt.Printf("Successfully deleted object '%s' from bucket '%s'.\n", objectKey, bucketName)
         case http.StatusNotFound:
             fmt.Printf("Object '%s' not found in bucket '%s'.\n", objectKey, bucketName)
+        case http.StatusInternalServerError: 
+            fmt.Printf("Internal server error : Status code: %d\n", resp.StatusCode)
         default:
             fmt.Printf("Failed to delete object '%s' from bucket '%s'. Status code: %d\n", objectKey, bucketName, resp.StatusCode)
         }

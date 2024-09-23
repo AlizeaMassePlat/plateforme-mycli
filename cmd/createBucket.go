@@ -73,10 +73,6 @@ func createBucket(url string) error {
             return nil
         case http.StatusConflict: // 409 - Bucket already exists
             return fmt.Errorf("%s", string(body))
-        case http.StatusBadRequest: // 400 - Invalid bucket name
-            return fmt.Errorf("%s", string(body))
-        case http.StatusNotFound: // 404 - API endpoint not found
-            return fmt.Errorf("%s", string(body))
         case http.StatusInternalServerError: // 500 - Server error
             return fmt.Errorf("%s", string(body))
         default:

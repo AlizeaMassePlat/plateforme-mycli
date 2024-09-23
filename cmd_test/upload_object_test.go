@@ -19,7 +19,7 @@ func TestUploadFileCmd(t *testing.T) {
     viper.Set("s3.api_url", "http://localhost:9090")
     CreateBucket(t, "upload-bucket")
     file := "./testdesk-1.txt"
-    // Créez le fichier de test avec un contenu spécifique
+    // Créer le fichier de test avec un contenu spécifique
     setupTestFile(t, file, "This is the content of the test file.")
     
     t.Run("UploadValidFile", func(t *testing.T) {
@@ -31,11 +31,7 @@ func TestUploadFileCmd(t *testing.T) {
             assert.NoError(t, err, "Expected no error during valid file upload")
         })
 
-        t.Logf("Captured output for valid file upload: %s", output)
-
-        // Nettoyer l'output en supprimant les caractères indésirables
-
-        // Vérifiez que l'output contient le bon message
+        // Vérifier que l'output contient le bon message
         assert.Contains(t, output, "File 'testdesk-1.txt' uploaded successfully to bucket 'upload-bucket'.")
     })
 

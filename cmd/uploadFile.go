@@ -117,12 +117,14 @@ var UploadFileCmd = &cobra.Command{
 		printProgressUpload(uploadedSize, totalSize)
 		progressChan <- struct{}{} // Arrêter la barre de progression
 
-		// Vérifier le statut de la réponse et afficher le message après l'upload
-		if resp.StatusCode == http.StatusOK {
+		switch resp.StatusCode {
+		case http.StatusOK :
 			fmt.Printf("\nFile '%s' uploaded successfully to bucket '%s'.\n", fileName, bucketName)
-		} else if resp.StatusCode == http.StatusNotFound {
-			fmt.Errorf("The system cannot find the file specified.")
-		} else {
+		case http.StatusInternalServerError: 
+			fmt.Printf("Internal server error : Status code: %d\n", resp.StatusCode)
+		case http.StatusNotFound:
+			fmt.Printf("The system cannot find the file specified")
+		default:
 			fmt.Printf("Failed to upload file. Status code: %d\n", resp.StatusCode)
 		}
 

@@ -54,6 +54,7 @@ var ListObjectCmd = &cobra.Command{
 		if resp.StatusCode != http.StatusOK {
 			log.Fatalf("Failed to list objects. Status code: %d", resp.StatusCode)
 		}
+		
 
 		// Lire le corps de la réponse
 		body, err := ioutil.ReadAll(resp.Body)

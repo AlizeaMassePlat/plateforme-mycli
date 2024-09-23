@@ -21,7 +21,7 @@ func CaptureOutput(f func()) string {
     if err != nil {
         log.Fatalf("failed to create pipe: %v", err) // Utiliser log.Fatal pour arrêter l'exécution en cas d'erreur
     }
-    defer reader.Close() // Assurez-vous de toujours fermer le reader
+    defer reader.Close() 
 
     // Sauvegarder stdout et le writer de logs
     oldStdout := os.Stdout
@@ -50,7 +50,7 @@ func CaptureOutput(f func()) string {
 
     // Attendre la copie des données
     if err := <-done; err != nil {
-        log.Fatalf("failed to copy output: %v", err) // Utiliser log.Fatal pour arrêter l'exécution en cas d'erreur
+        log.Fatalf("failed to copy output: %v", err) 
     }
 
     return buf.String()
@@ -58,7 +58,7 @@ func CaptureOutput(f func()) string {
 
 
 func CreateBucket(t *testing.T, bucketName string) {
-	apiURL := "http://localhost:9090" // URL de votre serveur S3-like
+	apiURL := "http://localhost:9090" 
 	createURL := fmt.Sprintf("%s/%s/", apiURL, bucketName)
 
 	// Créer la requête PUT pour créer le bucket
@@ -76,7 +76,7 @@ func CreateBucket(t *testing.T, bucketName string) {
 }
 
 func DeleteBucket(t *testing.T, bucketName string) {
-	apiURL := "http://localhost:9090" // URL de votre serveur S3-like
+	apiURL := "http://localhost:9090" 
 	deleteURL := fmt.Sprintf("%s/%s/", apiURL, bucketName)
 
 	// Créer la requête DELETE pour supprimer le bucket
@@ -96,7 +96,7 @@ func DeleteBucket(t *testing.T, bucketName string) {
 }
 
 func DeleteAllBuckets(t *testing.T) {
-	apiURL := "http://localhost:9090" // URL de votre serveur S3-like
+	apiURL := "http://localhost:9090" 
 
 	// Envoyer une requête GET pour lister les buckets
 	resp, err := http.Get(apiURL)
@@ -121,14 +121,14 @@ func DeleteAllBuckets(t *testing.T) {
 }
 
 func CreateObject(t *testing.T, bucketName, objectName, objectContent string) {
-	apiURL := "http://localhost:9090" // URL de votre serveur S3-like
+	apiURL := "http://localhost:9090" 
 	objectURL := fmt.Sprintf("%s/%s/%s", apiURL, bucketName, objectName)
 
 	// Créer une requête PUT pour ajouter l'objet dans le bucket
 	req, err := http.NewRequest("PUT", objectURL, strings.NewReader(objectContent))
 	assert.NoError(t, err, "Failed to create PUT request for object creation")
 
-	// Ajouter l'en-tête Content-Type (par exemple, text/plain ou autre selon le type de contenu)
+	// Ajout des headers necessaires 
 	req.Header.Set("Content-Type", "text/plain")
 	req.Header.Set("X-Amz-Decoded-Content-Length", "12")
 	// Envoyer la requête

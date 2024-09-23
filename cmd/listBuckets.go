@@ -73,7 +73,7 @@ var ListBucketsCmd = &cobra.Command{
 		// Afficher les buckets
 		fmt.Println("Buckets:")
 		const readableDateLayout = "2006-01-02 15:04:05"
-		const inputLayout = time.RFC3339 // Le format attendu de votre chaîne de date (par exemple "2024-09-17T08:58:31Z")
+		const inputLayout = time.RFC3339 // Le format attendu : "2024-09-17T08:58:31Z")
 		
 		for _, bucket := range result.Buckets {
 			// Convertir la chaîne de caractères CreationDate en time.Time

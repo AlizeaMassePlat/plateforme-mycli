@@ -38,11 +38,7 @@ var DownloadFileCmd = &cobra.Command{
 		url := fmt.Sprintf("%s/%s/%s", apiURL, bucketName, fileName)
 
 		// Télécharger le fichier
-		if err := downloadFile(url, destPath, fileName); err != nil {
-			log.Printf("Error downloading file: %v", err)
-		} else {
-			fmt.Printf("File '%s' downloaded successfully to '%s'.\n", fileName, destPath)
-		}
+		 downloadFile(url, destPath, fileName); 
 	},
 }
 
@@ -54,9 +50,15 @@ func downloadFile(url, destPath, fileName string) error {
 	}
 	defer resp.Body.Close()
 
-	// Vérifier le code de statut HTTP
-	if resp.StatusCode == http.StatusNotFound {
-		return fmt.Errorf("The system cannot find the file specified.")
+	switch resp.StatusCode {
+	case http.StatusOK :
+		fmt.Printf("File '%s' downloaded successfully to '%s'.\n", fileName, destPath)
+	case http.StatusInternalServerError: 
+		fmt.Printf("Internal server error : Status code: %d\n", resp.StatusCode)
+	case http.StatusNotFound:
+		fmt.Printf("The system cannot find the file specified")
+	default:
+		fmt.Printf("Failed to download file. Status code: %d\n", resp.StatusCode)
 	}
 
 	// Ouvrir le fichier de destination

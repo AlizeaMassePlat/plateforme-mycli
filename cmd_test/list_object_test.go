@@ -59,7 +59,7 @@ func TestListObjectCmd(t *testing.T) {
 			assert.NoError(t, err, "Expected no error when no object are found")
 		})
 
-		// Vérifiez qu'aucun bucket n'est trouvé après suppression
+		// Vérifier qu'aucun bucket n'est trouvé après suppression
 		assert.Contains(t, output, "No objects found.", "Expected message when no buckets are found")
 	})
 

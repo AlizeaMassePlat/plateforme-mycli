@@ -48,6 +48,8 @@ var DeleteBucketCmd = &cobra.Command{
 			fmt.Printf("Bucket '%s' deleted successfully.\n", bucketName)
 		case http.StatusNotFound:
 			fmt.Printf("Bucket '%s' does not exist or has already been deleted.\n", bucketName)
+		case http.StatusInternalServerError: 
+			fmt.Printf("Internal server error : Status code: %d\n", resp.StatusCode)
 		default:
 			fmt.Printf("Failed to delete bucket '%s'. Status code: %d\n", bucketName, resp.StatusCode)
 		}
