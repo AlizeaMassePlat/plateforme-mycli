@@ -26,7 +26,7 @@ func TestDownloadFileCmd(t *testing.T) {
 		})
 
 		// Vérifier que l'output contient le bon message
-		assert.Contains(t, output, "File 'testdesk-1.txt' downloaded successfully", "Expected success message for file download")
+        assert.Contains(t, output, "Download completed successfully.")
 
 		// Vérifier que le fichier a bien été téléchargé
 		filePath := filepath.Join(dir, "testdesk-1.txt")
@@ -48,6 +48,8 @@ func TestDownloadFileCmd(t *testing.T) {
 		})
 
 		// Vérifier que l'output contient le bon message d'erreur
-		assert.Contains(t, output, "The system cannot find the file specified", "Expected error message for non-existent file")
+		assert.Contains(t, output, "the system cannot find the file specified")
+
+		
 	})
 }

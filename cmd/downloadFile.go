@@ -38,7 +38,10 @@ var DownloadFileCmd = &cobra.Command{
 		url := fmt.Sprintf("%s/%s/%s", apiURL, bucketName, fileName)
 
 		// Télécharger le fichier
-		 downloadFile(url, destPath, fileName); 
+		err := downloadFile(url, destPath, fileName)
+		if err != nil {
+			log.Printf("Error: %v", err)
+		}
 	},
 }
 
@@ -50,79 +53,79 @@ func downloadFile(url, destPath, fileName string) error {
 	}
 	defer resp.Body.Close()
 
+	// Gérer les statuts HTTP
 	switch resp.StatusCode {
-	case http.StatusOK :
-		fmt.Printf("File '%s' downloaded successfully to '%s'.\n", fileName, destPath)
-	case http.StatusInternalServerError: 
-		fmt.Printf("Internal server error : Status code: %d\n", resp.StatusCode)
-	case http.StatusNotFound:
-		fmt.Printf("The system cannot find the file specified")
-	default:
-		fmt.Printf("Failed to download file. Status code: %d\n", resp.StatusCode)
-	}
+	case http.StatusOK:
+		// Statut 200 OK - Procéder au téléchargement
+		fmt.Printf("File '%s' is being downloaded...\n", fileName)
 
-	// Ouvrir le fichier de destination
-	out, err := os.Create(filepath.Join(destPath, fileName))
-	if err != nil {
-		return fmt.Errorf("failed to create destination file: %w", err)
-	}
-	defer out.Close()
-
-	// Créer un buffer pour lire le contenu
-	buffer := make([]byte, 256) // Taille de buffer réduite
-
-	// Obtenir la taille du fichier pour l'animation de progression
-	totalSize := resp.ContentLength
-	var downloadedSize int64 = 0
-
-	// Lire et copier le contenu avec une animation de progression
-	firstRead := true // Indicateur pour démarrer la barre de progression après la première lecture
-	progressChan := make(chan struct{})
-
-	for {
-		n, err := resp.Body.Read(buffer)
-		if err != nil && err != io.EOF {
-			progressChan <- struct{}{} // Arrêter l'animation
-			return fmt.Errorf("failed to read response body: %w", err)
+		// Ouvrir le fichier de destination
+		out, err := os.Create(filepath.Join(destPath, fileName))
+		if err != nil {
+			return fmt.Errorf("failed to create destination file: %w", err)
 		}
-		if n == 0 {
-			break
-		}
+		defer out.Close()
 
-		// Écrire dans le fichier de destination
-		if _, err := out.Write(buffer[:n]); err != nil {
-			progressChan <- struct{}{} // Arrêter l'animation
-			return fmt.Errorf("failed to write to file: %w", err)
-		}
-		downloadedSize += int64(n)
+		// Créer un buffer pour lire le contenu
+		buffer := make([]byte, 256) // Taille de buffer
+		totalSize := resp.ContentLength
+		var downloadedSize int64 = 0
 
-		// Démarrer l'animation de progression après la première lecture
-		if firstRead {
-			firstRead = false
-			go func() {
-				for {
-					select {
-					case <-progressChan:
-						return
-					default:
-						printProgress(downloadedSize, totalSize)
-						time.Sleep(100 * time.Millisecond) // rafraîchir toutes les 100ms
-					}
+		// Canal pour gérer la progression
+		progressChan := make(chan struct{})
+
+		// Goroutine pour afficher la barre de progression
+		go func() {
+			for {
+				select {
+				case <-progressChan:
+					return
+				default:
+					printProgress(downloadedSize, totalSize)
+					time.Sleep(100 * time.Millisecond)
 				}
-			}()
+			}
+		}()
+
+		// Lire et copier le contenu
+		for {
+			n, err := resp.Body.Read(buffer)
+			if err != nil && err != io.EOF {
+				progressChan <- struct{}{} // Arrêter la progression
+				return fmt.Errorf("failed to read response body: %w", err)
+			}
+			if n == 0 {
+				break
+			}
+
+			// Écrire dans le fichier de destination
+			if _, err := out.Write(buffer[:n]); err != nil {
+				progressChan <- struct{}{} // Arrêter la progression
+				return fmt.Errorf("failed to write to file: %w", err)
+			}
+			downloadedSize += int64(n)
 		}
+
+		// Mettre à jour une dernière fois la barre de progression
+		printProgress(downloadedSize, totalSize)
+		progressChan <- struct{}{} // Arrêter l'animation de progression
+		fmt.Println("\nDownload completed successfully.")
+
+	case http.StatusNotFound:
+		// Statut 404 Not Found - Fichier introuvable
+		return fmt.Errorf("the system cannot find the file specified (404 Not Found)")
+
+	case http.StatusInternalServerError:
+		// Statut 500 Internal Server Error
+		return fmt.Errorf("internal server error (500)")
+
+	default:
+		// Tout autre statut
+		return fmt.Errorf("failed to download file. Status code: %d", resp.StatusCode)
 	}
 
-	// Mettre à jour une dernière fois la barre de progression pour indiquer 100%
-	printProgress(downloadedSize, totalSize)
-
-	// Arrêter l'animation de progression
-	progressChan <- struct{}{}
-	fmt.Print("\n")
 	return nil
 }
-
-
 
 // Affiche une barre de progression simple
 func printProgress(downloaded, total int64) {
